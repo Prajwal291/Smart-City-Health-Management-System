@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - SHMS{% endblock %}
+{% block header %}My Notifications{% endblock %}
+
+{% block content %}
+<div class="glass card animate-fade-in" style="max-width: 800px; margin: 0 auto;">
+    <h3 style="margin-bottom: 1.5rem;"><i class="fas fa-bell"></i> Alerts & Updates</h3>
+    
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+        {% for note in notifications %}
+        <div class="glass" style="padding: 1.5rem; border-radius: 12px; border-left: 4px solid 
+            {% if note.type == 'success' %} var(--success)
+            {% elif note.type == 'warning' %} var(--warning)
+            {% elif note.type == 'danger' %} var(--danger)
+            {% else %} var(--primary) {% endif %};
+            background: rgba(255, 255, 255, 0.03);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                <span style="font-weight: 600; text-transform: uppercase; font-size: 0.8rem; color: 
+                    {% if note.type == 'success' %} var(--success)
+                    {% elif note.type == 'warning' %} var(--warning)
+                    {% elif note.type == 'danger' %} var(--danger)
+                    {% else %} var(--primary) {% endif %};">
+                    {{ note.type }}
+                </span>
+                <span class="text-muted" style="font-size: 0.8rem;">{{ note.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
+            </div>
+            <p style="margin: 0;">{{ note.message }}</p>
+        </div>
+        {% else %}
+        <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            <i class="fas fa-bell-slash" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+            No notifications yet
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

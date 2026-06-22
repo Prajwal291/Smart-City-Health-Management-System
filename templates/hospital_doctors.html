@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Doctors - SHMS{% endblock %}
+{% block header %}Doctors Management{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 350px 1fr; gap: 2rem; align-items: start;">
+    <div class="glass card animate-fade-in">
+        <h3><i class="fas fa-user-md"></i> Add New Doctor</h3>
+        <form action="/hospital/doctors/add" method="POST">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="Dr. Sarah Connor" required>
+            </div>
+            <div class="form-group">
+                <label>Specialization</label>
+                <select name="specialization" required>
+                    <option value="General Medicine">General Medicine</option>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Neurology">Neurology</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="Orthopedics">Orthopedics</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" name="phone" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                Save Doctor <i class="fas fa-save"></i>
+            </button>
+        </form>
+    </div>
+
+    <div class="glass card animate-fade-in" style="animation-delay: 0.2s;">
+        <h3><i class="fas fa-list"></i> Doctor List</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Specialization</th>
+                        <th>Contact</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doctor in doctors %}
+                    <tr>
+                        <td>Dr. {{ doctor.name }}</td>
+                        <td>
+                            <span class="glass" style="padding: 0.2rem 0.6rem; border-radius: 8px; font-size: 0.85rem; background: rgba(79, 70, 229, 0.1);">
+                                {{ doctor.specialization }}
+                            </span>
+                        </td>
+                        <td>
+                            <div style="font-size: 0.9rem;">{{ doctor.email }}</div>
+                            <div class="text-muted" style="font-size: 0.8rem;">{{ doctor.phone }}</div>
+                        </td>
+                        <td>
+                            <a href="/hospital/doctors/delete/{{ doctor.id }}" class="btn btn-glass" 
+                               style="color: var(--danger); padding: 0.5rem;" 
+                               onclick="return confirm('Remove this doctor?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--text-muted);">No doctors found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

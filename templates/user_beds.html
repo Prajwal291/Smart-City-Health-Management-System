@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Bed Availability - SHMS{% endblock %}
+{% block header %}Emergency Bed Status{% endblock %}
+
+{% block content %}
+<div class="glass card animate-fade-in">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h3><i class="fas fa-bed-pulse"></i> Available Beds (Real-time)</h3>
+        <span class="glass" style="padding: 0.5rem 1rem; border-radius: 50px; background: rgba(16, 185, 129, 0.1); color: var(--success);">
+            <i class="fas fa-circle-check"></i> {{ beds|length }} Beds Found
+        </span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+        {% for bed in beds %}
+        <div class="glass card animate-fade-in" style="padding: 1.5rem; border: 1px solid rgba(16, 185, 129, 0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.2rem;">{{ bed.hospital.name }}</h3>
+                    <p class="text-muted" style="font-size: 0.85rem;">{{ bed.hospital.address }}</p>
+                </div>
+                <span class="glass" style="padding: 0.2rem 0.6rem; border-radius: 8px; font-size: 0.75rem; background: rgba(79, 70, 229, 0.1); color: var(--primary);">
+                    {{ bed.category }}
+                </span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="font-size: 2rem; color: var(--success);">
+                    <i class="fas fa-bed"></i>
+                </div>
+                <div>
+                    <div style="font-weight: 600;">Ward: {{ bed.ward }}</div>
+                    <div class="text-muted" style="font-size: 0.8rem;">Bed No: {{ bed.bed_number }}</div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+                <a href="tel:{{ bed.hospital.phone }}" class="btn btn-glass" style="flex: 1; justify-content: center;">
+                    <i class="fas fa-phone"></i> Call
+                </a>
+                <a href="/user/book/{{ bed.hospital_id }}" class="btn btn-primary" style="flex: 2; justify-content: center;">
+                    Reserve/Book <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+        {% else %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">
+            <i class="fas fa-triangle-exclamation" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+            No available beds found at the moment. Please contact hospitals directly for emergencies.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

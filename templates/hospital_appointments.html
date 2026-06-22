@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Appointments - SHMS{% endblock %}
+{% block header %}Appointments Management{% endblock %}
+
+{% block content %}
+<div class="glass card animate-fade-in">
+    <h3><i class="fas fa-calendar-check"></i> All Appointments</h3>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in appointments %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 500;">{{ appt.date }}</div>
+                        <div class="text-muted" style="font-size: 0.8rem;">{{ appt.time }}</div>
+                    </td>
+                    <td>{{ appt.patient.name }}</td>
+                    <td>Dr. {{ appt.doctor.name if appt.doctor else 'Deleted / Unassigned' }}</td>
+                    <td>
+                        <span class="glass" style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; 
+                              {% if appt.status == 'Pending' %} background: rgba(245, 158, 11, 0.1); color: var(--warning);
+                              {% elif appt.status == 'Confirmed' %} background: rgba(16, 185, 129, 0.1); color: var(--success);
+                              {% else %} background: rgba(239, 68, 68, 0.1); color: var(--danger); {% endif %}">
+                            {{ appt.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <form action="/hospital/appointments/update/{{ appt.id }}" method="POST" style="display: flex; gap: 0.5rem;">
+                            <select name="status" style="width: auto; padding: 0.25rem; font-size: 0.8rem;">
+                                <option value="Pending" {% if appt.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Confirmed" {% if appt.status == 'Confirmed' %}selected{% endif %}>Confirm</option>
+                                <option value="Cancelled" {% if appt.status == 'Cancelled' %}selected{% endif %}>Cancel</option>
+                                <option value="Completed" {% if appt.status == 'Completed' %}selected{% endif %}>Complete</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; color: var(--text-muted);">No appointments found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

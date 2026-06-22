@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment - SHMS{% endblock %}
+{% block header %}Appointment Booking{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: flex-start; min-height: 70vh;">
+    <div class="glass card animate-fade-in" style="width: 100%; max-width: 600px; padding: 2.5rem;">
+        <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 2rem;">
+            <div style="width: 80px; height: 80px; background: rgba(16, 185, 129, 0.1); border-radius: 20px; display: flex; align-items: center; justify-content: center; color: var(--success); font-size: 2rem;">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div>
+                <h2 class="text-gradient" style="margin: 0;">Book at {{ hospital.name }}</h2>
+                <p class="text-muted" style="margin: 0;">{{ hospital.address }}</p>
+            </div>
+        </div>
+
+        <form action="/user/book" method="POST">
+            <input type="hidden" name="hospital_id" value="{{ hospital.id }}">
+            
+            <div class="form-group">
+                <label><i class="fas fa-user-md"></i> Select Doctor</label>
+                <select name="doctor_id" required>
+                    <option value="" disabled selected>Choose a specialist...</option>
+                    {% for doctor in doctors %}
+                    <option value="{{ doctor.id }}">Dr. {{ doctor.name }} ({{ doctor.specialization }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div class="form-group">
+                    <label><i class="fas fa-calendar"></i> Date</label>
+                    <input type="date" name="date" required min="{{ now_date }}">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-clock"></i> Preferred Time</label>
+                    <input type="time" name="time" required>
+                </div>
+            </div>
+
+            <div class="glass" style="padding: 1rem; border-radius: 12px; margin-bottom: 2rem; background: rgba(79, 70, 229, 0.05); font-size: 0.9rem; color: var(--text-muted);">
+                <i class="fas fa-info-circle" style="color: var(--primary);"></i> Note: Your appointment will be reviewed by the hospital and its status will be updated in your dashboard.
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; height: 50px;">
+                Confirm Booking <i class="fas fa-check-circle"></i>
+            </button>
+            <a href="/user/hospitals" class="btn btn-glass" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                Cancel
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

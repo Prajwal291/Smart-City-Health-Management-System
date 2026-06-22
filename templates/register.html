@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Register - SHMS{% endblock %}
+
+{% block header %}Create Account{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
+    <div class="glass card animate-fade-in" style="width: 100%; max-width: 500px; padding: 2.5rem; background: rgba(255, 255, 255, 0.9); border: 1px solid white;">
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="display: inline-block; width: 60px; height: 60px; background: white; border-radius: 50%; padding: 8px; margin-bottom: 1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border: 2px solid var(--secondary);">
+                <div style="width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, var(--secondary), #4f46e5); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.8rem;">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+            </div>
+            <h2 class="text-gradient" style="font-size: 1.75rem; margin-top: 0.5rem;">Join SHMS</h2>
+            <p style="color: #475569; font-weight: 500;">Create your citizen account today</p>
+        </div>
+
+        {% if error %}
+        <div class="glass" style="padding: 1rem; border-radius: 10px; border-left: 4px solid var(--danger); background: rgba(239, 68, 68, 0.1); margin-bottom: 1.5rem; color: #b91c1c;">
+            <i class="fas fa-circle-exclamation"></i> {{ error }}
+        </div>
+        {% endif %}
+
+        <form action="/register" method="POST">
+            <div class="form-group">
+                <label for="name" style="color: #1e293b; font-weight: 600;">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="John Doe" required style="background: white; border: 1px solid #cbd5e1; color: #0f172a;">
+            </div>
+            <div class="form-group">
+                <label for="email" style="color: #1e293b; font-weight: 600;">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="john@example.com" required style="background: white; border: 1px solid #cbd5e1; color: #0f172a;">
+            </div>
+            <div class="form-group">
+                <label for="password" style="color: #1e293b; font-weight: 600;">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a strong password" required style="background: white; border: 1px solid #cbd5e1; color: #0f172a;">
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm_password" style="color: #1e293b; font-weight: 600;">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-type your password" required style="background: white; border: 1px solid #cbd5e1; color: #0f172a;">
+            </div>
+
+            <div id="password-requirements" style="font-size: 0.85rem; margin-top: -0.5rem; margin-bottom: 1.5rem; padding: 0.75rem; background: rgba(0,0,0,0.02); border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 0.35rem;">
+                <div style="font-weight: 600; color: #475569; margin-bottom: 0.2rem; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Password Requirements:</div>
+                <div id="req-length" style="color: #64748b; font-weight: 500; transition: all 0.2s;"><i class="far fa-circle-dot"></i> At least 6 characters</div>
+                <div id="req-uppercase" style="color: #64748b; font-weight: 500; transition: all 0.2s;"><i class="far fa-circle-dot"></i> At least 1 uppercase letter</div>
+                <div id="req-lowercase" style="color: #64748b; font-weight: 500; transition: all 0.2s;"><i class="far fa-circle-dot"></i> At least 1 lowercase letter</div>
+                <div id="req-number" style="color: #64748b; font-weight: 500; transition: all 0.2s;"><i class="far fa-circle-dot"></i> At least 1 number</div>
+                <div id="req-match" style="color: #64748b; font-weight: 500; transition: all 0.2s;"><i class="far fa-circle-dot"></i> Passwords must match</div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem; font-weight: 600;">
+                Create Account <i class="fas fa-check"></i>
+            </button>
+        </form>
+
+        <script>
+            const form = document.querySelector('form');
+            const passwordInput = document.getElementById('password');
+            const confirmInput = document.getElementById('confirm_password');
+            const reqLength = document.getElementById('req-length');
+            const reqUpper = document.getElementById('req-uppercase');
+            const reqLower = document.getElementById('req-lowercase');
+            const reqNumber = document.getElementById('req-number');
+            const reqMatch = document.getElementById('req-match');
+            
+            function validatePassword() {
+                const value = passwordInput.value;
+                const confirmValue = confirmInput.value;
+                
+                // 1. Length check
+                const hasLength = value.length >= 6;
+                updateRequirement(reqLength, hasLength);
+                
+                // 2. Uppercase check
+                const hasUpper = /[A-Z]/.test(value);
+                updateRequirement(reqUpper, hasUpper);
+                
+                // 3. Lowercase check
+                const hasLower = /[a-z]/.test(value);
+                updateRequirement(reqLower, hasLower);
+                
+                // 4. Number check
+                const hasNumber = /[0-9]/.test(value);
+                updateRequirement(reqNumber, hasNumber);
+                
+                // 5. Match check
+                const hasMatch = value === confirmValue && value.length > 0;
+                updateRequirement(reqMatch, hasMatch);
+                
+                return hasLength && hasUpper && hasLower && hasNumber && hasMatch;
+            }
+            
+            function updateRequirement(element, isMet) {
+                const icon = element.querySelector('i');
+                if (isMet) {
+                    element.style.color = '#10b981'; // Green
+                    icon.className = 'fas fa-circle-check';
+                } else {
+                    element.style.color = '#ef4444'; // Red
+                    icon.className = 'fas fa-circle-xmark';
+                }
+            }
+            
+            passwordInput.addEventListener('input', validatePassword);
+            confirmInput.addEventListener('input', validatePassword);
+            
+            form.addEventListener('submit', function(event) {
+                if (!validatePassword()) {
+                    event.preventDefault();
+                    alert('Please satisfy all password requirements before registering!');
+                }
+            });
+        </script>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <div style="color: #475569;">Already have an account? <a href="/" style="color: var(--primary); text-decoration: none; font-weight: 600;">Login here</a></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

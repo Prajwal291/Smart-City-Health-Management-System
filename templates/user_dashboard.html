@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard - SHMS{% endblock %}
+{% block header %}Welcome, {{ user.name }}{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    <!-- SOS Emergency Card -->
+    <div class="glass card animate-fade-in" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.2);">
+        <h3 style="color: var(--danger);"><i class="fas fa-triangle-exclamation"></i> Emergency SOS</h3>
+        <p class="text-muted">Click the button below to send your current location to emergency services and nearby hospitals.</p>
+        
+        <form id="sosForm" action="/user/sos" method="POST">
+            <input type="hidden" name="latitude" id="lat">
+            <input type="hidden" name="longitude" id="lng">
+            <button type="button" onclick="triggerSOS()" class="btn btn-primary" style="background: var(--danger); width: 100%; justify-content: center; height: 60px; font-size: 1.2rem;">
+                <i class="fas fa-truck-medical"></i> TRIGGER SOS
+            </button>
+        </form>
+        {% if active_alerts > 0 %}
+        <div style="margin-top: 1rem; text-align: center; color: var(--danger); font-weight: 500;">
+            <i class="fas fa-circle-dot fa-beat"></i> {{ active_alerts }} Active SOS Alert(s)
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Quick Links Card -->
+    <div class="glass card animate-fade-in" style="animation-delay: 0.1s;">
+        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <a href="/user/hospitals" class="btn btn-glass" style="flex-direction: column; padding: 1.5rem; gap: 0.5rem;">
+                <i class="fas fa-hospital" style="font-size: 1.5rem; color: var(--primary);"></i>
+                <span>Find Hospital</span>
+            </a>
+            <a href="/user/appointments" class="btn btn-glass" style="flex-direction: column; padding: 1.5rem; gap: 0.5rem;">
+                <i class="fas fa-calendar-check" style="font-size: 1.5rem; color: var(--success);"></i>
+                <span>My Bookings</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="glass card animate-fade-in" style="animation-delay: 0.2s;">
+    <h3><i class="fas fa-calendar-alt"></i> Recent Appointments</h3>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Hospital</th>
+                    <th>Doctor</th>
+                    <th>Date & Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in appointments %}
+                <tr>
+                    <td>{{ appt.hospital.name }}</td>
+                    <td>Dr. {{ appt.doctor.name if appt.doctor else 'Deleted / Unassigned' }}</td>
+                    <td>{{ appt.date }} at {{ appt.time }}</td>
+                    <td>
+                        <span class="glass" style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; 
+                              {% if appt.status == 'Pending' %} background: rgba(245, 158, 11, 0.1); color: var(--warning);
+                              {% elif appt.status == 'Confirmed' %} background: rgba(16, 185, 129, 0.1); color: var(--success);
+                              {% else %} background: rgba(239, 68, 68, 0.1); color: var(--danger); {% endif %}">
+                            {{ appt.status }}
+                        </span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--text-muted);">No recent appointments</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function triggerSOS() {
+    if (confirm("Are you sure you want to trigger an emergency SOS?")) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    document.getElementById('lat').value = position.coords.latitude;
+                    document.getElementById('lng').value = position.coords.longitude;
+                    document.getElementById('sosForm').submit();
+                },
+                (error) => {
+                    alert("Error getting location: " + error.message + ". SOS sent with default coordinates.");
+                    document.getElementById('lat').value = 0.0;
+                    document.getElementById('lng').value = 0.0;
+                    document.getElementById('sosForm').submit();
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+}
+</script>
+{% endblock %}

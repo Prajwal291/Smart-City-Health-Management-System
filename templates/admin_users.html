@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Users - SHMS{% endblock %}
+{% block header %}User Management{% endblock %}
+
+{% block content %}
+<div class="glass card animate-fade-in">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3><i class="fas fa-users"></i> Registered Citizens</h3>
+        <p class="text-muted">Total: {{ users|length }}</p>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 500;">{{ user.name }}</div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <span class="glass" style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; background: rgba(79, 70, 229, 0.1); color: var(--primary);">
+                            {{ user.role.capitalize() }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="/admin/users/delete/{{ user.id }}" class="btn btn-glass" 
+                           style="color: var(--danger); padding: 0.5rem;" 
+                           onclick="return confirm('Are you sure you want to remove this user?')">
+                            <i class="fas fa-user-minus"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4" style="text-align: center; color: var(--text-muted);">No users found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

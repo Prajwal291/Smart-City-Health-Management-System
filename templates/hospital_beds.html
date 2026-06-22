@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Bed Management - SHMS{% endblock %}
+{% block header %}Bed Management{% endblock %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: 350px 1fr; gap: 2rem; align-items: start;">
+    <div class="glass card animate-fade-in">
+        <h3><i class="fas fa-plus-square"></i> Add New Bed</h3>
+        <form action="/hospital/beds/add" method="POST">
+            <div class="form-group">
+                <label>Ward Name</label>
+                <input type="text" name="ward" placeholder="General Ward A" required>
+            </div>
+            <div class="form-group">
+                <label>Bed Number</label>
+                <input type="text" name="bed_number" placeholder="G-101" required>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category" required>
+                    <option value="General">General</option>
+                    <option value="ICU">ICU</option>
+                    <option value="Emergency">Emergency</option>
+                    <option value="VIP">VIP</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                Add Bed <i class="fas fa-bed"></i>
+            </button>
+        </form>
+    </div>
+
+    <div class="glass card animate-fade-in" style="animation-delay: 0.2s;">
+        <h3><i class="fas fa-bed-pulse"></i> Bed Status & Allocation</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ward / Bed</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Occupied By</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bed in beds %}
+                    <tr>
+                        <td>
+                            <div style="font-weight: 500;">{{ bed.ward }}</div>
+                            <div class="text-muted" style="font-size: 0.8rem;">Bed: {{ bed.bed_number }}</div>
+                        </td>
+                        <td>{{ bed.category }}</td>
+                        <td>
+                            <span class="glass" style="padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; 
+                                  background: {{ 'rgba(16, 185, 129, 0.1)' if bed.status == 'Available' else 'rgba(239, 68, 68, 0.1)' }}; 
+                                  color: {{ 'var(--success)' if bed.status == 'Available' else 'var(--danger)' }};">
+                                {{ bed.status }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if bed.patient %}
+                                {{ bed.patient.name }}
+                            {% else %}
+                                <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form action="/hospital/beds/assign/{{ bed.id }}" method="POST" style="display: flex; gap: 0.5rem;">
+                                <select name="patient_id" style="width: auto; padding: 0.25rem; font-size: 0.8rem;">
+                                    <option value="0">-- Unassign --</option>
+                                    {% for patient in patients %}
+                                    <option value="{{ patient.id }}" {% if bed.patient_id == patient.id %}selected{% endif %}>{{ patient.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-glass" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Set</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-muted);">No beds registered</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

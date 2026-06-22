@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Find Doctors - SHMS{% endblock %}
+{% block header %}Medical Specialists{% endblock %}
+
+{% block content %}
+<div class="glass card animate-fade-in" style="margin-bottom: 2rem;">
+    <form action="/user/doctors" method="GET" style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+        <div style="position: relative; flex: 1;">
+            <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+            <input type="text" name="query" placeholder="Search by name or specialization (e.g. Cardiology)..." value="{{ query or '' }}" style="padding-left: 2.5rem;">
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        {% for doctor in doctors %}
+        <div class="glass card animate-fade-in" style="padding: 1.5rem; border: 1px solid var(--glass-border);">
+            <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+                <div style="width: 50px; height: 50px; background: rgba(79, 70, 229, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                    <i class="fas fa-user-md" style="font-size: 1.5rem;"></i>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 1.1rem;">Dr. {{ doctor.name }}</h3>
+                    <span class="text-gradient" style="font-size: 0.85rem; font-weight: 500;">{{ doctor.specialization }}</span>
+                </div>
+            </div>
+            <div style="margin-bottom: 1rem; font-size: 0.9rem;">
+                <p><i class="fas fa-hospital-user" style="width: 20px;"></i> {{ doctor.hospital.name }}</p>
+                <p><i class="fas fa-location-dot" style="width: 20px;"></i> {{ doctor.hospital.address }}</p>
+            </div>
+            <a href="/user/book/{{ doctor.hospital_id }}" class="btn btn-glass" style="width: 100%; justify-content: center;">
+                Book Appointment <i class="fas fa-calendar-plus"></i>
+            </a>
+        </div>
+        {% else %}
+        <p class="text-muted" style="grid-column: 1/-1; text-align: center; padding: 2rem;">No specialists found matching your search.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
